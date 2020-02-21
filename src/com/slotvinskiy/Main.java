@@ -7,9 +7,11 @@ package com.slotvinskiy;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 public class Main {
 
@@ -49,22 +51,19 @@ public class Main {
         }
     }
 
-    private static void showTop10(Map<String, Integer> origin) {
-        Map<Integer, String> sortedByOccurrences = new TreeMap<>(Collections.reverseOrder());
-        for (Map.Entry<String, Integer> entry : origin.entrySet()) {
-            sortedByOccurrences.put(entry.getValue(), entry.getKey());
-        }
-        print(sortedByOccurrences);
+    private static void showTop10(Map<String, Integer> map) {
+        Map<String, Integer> topTen =
+                map.entrySet().stream()
+                        .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+                        .limit(10)
+                        .collect(Collectors.toMap(
+                                Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+        print(topTen);
     }
 
-    private static void print(Map<Integer, String> map) {
-        int counter = 0;
-        for (Map.Entry<Integer, String> entry : map.entrySet()) {
+    private static void print(Map<String, Integer> topTen) {
+        for (Map.Entry<String, Integer> entry : topTen.entrySet()) {
             System.out.println(entry.getValue() + " - " + entry.getKey());
-            counter++;
-            if (counter == 10) {
-                break;
-            }
         }
     }
 }
